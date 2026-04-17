@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>India vs Vietnam — The Ultimate Battle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --india:   #FF9933;
+      --india2:  #138808;
+      --india-glow: rgba(255,153,51,0.6);
+      --viet:    #DA251D;
+      --viet2:   #FFCD00;
+      --viet-glow: rgba(218,37,29,0.4);
+      --dark:    #080808;
+      --mid:     #111;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--dark); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+    /* ─── HERO SPLIT ─── */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      position: relative; overflow: hidden;
+    }
+
+    .side {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 6rem 3rem; position: relative; overflow: hidden;
+      cursor: default;
+      transition: flex 0.5s ease;
+    }
+    .side:hover { flex: 1.08; }
+
+    .side-india {
+      background: linear-gradient(135deg, #0a0500 0%, #1a0900 60%, #0d1a00 100%);
+    }
+    .side-viet {
+      background: linear-gradient(135deg, #0a0000 0%, #1a0000 60%, #1a0a00 100%);
+    }
+
+    /* animated bg blobs */
+    .blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.35; animation: pulse 4s ease-in-out infinite alternate;
+    }
+    .blob-india-1 { width: 400px; height: 400px; background: var(--india); top: -100px; left: -100px; }
+    .blob-india-2 { width: 300px; height: 300px; background: var(--india2); bottom: -80px; right: -80px; animation-delay: 1s; }
+    .blob-viet-1  { width: 400px; height: 400px; background: var(--viet); top: -100px; right: -100px; }
+    .blob-viet-2  { width: 300px; height: 300px; background: var(--viet2); bottom: -80px; left: -80px; animation-delay: 1.5s; }
+
+    @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.15); } }
+
+    .flag { font-size: 5rem; margin-bottom: 1.2rem; animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    .hero-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      letter-spacing: 3px; line-height: 1;
+      text-align: center; position: relative; z-index: 2;
+    }
+    .india-name { color: var(--india); text-shadow: 0 0 40px var(--india-glow); }
+    .viet-name  { color: var(--viet);  text-shadow: 0 0 40px var(--viet-glow); }
+
+    .hero-country {
+      font-size: 0.8rem; letter-spacing: 5px; text-transform: uppercase;
+      opacity: 0.6; margin-top: 0.6rem; margin-bottom: 2rem; position: relative; z-index: 2;
+    }
+
+    /* WINNER BADGE */
+    .winner-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: linear-gradient(135deg, var(--india), var(--india2));
+      color: #000; font-weight: 900; font-size: 0.75rem;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 0.5rem 1.4rem; border-radius: 999px;
+      box-shadow: 0 0 30px var(--india-glow);
+      animation: glow-badge 2s ease-in-out infinite alternate;
+      position: relative; z-index: 2;
+    }
+    @keyframes glow-badge {
+      from { box-shadow: 0 0 20px var(--india-glow); }
+      to   { box-shadow: 0 0 50px var(--india-glow), 0 0 80px rgba(255,153,51,0.3); }
+    }
+
+    .loser-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.4);
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      padding: 0.5rem 1.4rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1);
+      position: relative; z-index: 2;
+    }
+
+    /* VS DIVIDER */
+    .vs-divider {
+      width: 80px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; position: relative; z-index: 10;
+      background: var(--dark);
+    }
+    .vs-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem; color: #fff;
+      text-shadow: 0 0 20px rgba(255,255,255,0.3);
+      writing-mode: vertical-rl; letter-spacing: 8px;
+    }
+    .vs-line {
+      width: 2px; flex: 1;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15), transparent);
+    }
+
+    /* ─── SCOREBOARD ─── */
+    #scoreboard {
+      background: var(--mid); padding: 5rem 4rem; text-align: center;
+      border-top: 1px solid rgba(255,153,51,0.2);
+      border-bottom: 1px solid rgba(255,153,51,0.2);
+    }
+    .score-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem); letter-spacing: 4px;
+      margin-bottom: 3rem;
+    }
+    .score-title span { color: var(--india); }
+
+    .score-display {
+      display: flex; align-items: center; justify-content: center; gap: 2rem;
+      margin-bottom: 4rem; flex-wrap: wrap;
+    }
+    .score-num {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(5rem, 15vw, 10rem); line-height: 1;
+    }
+    .score-india { color: var(--india); text-shadow: 0 0 60px var(--india-glow); }
+    .score-viet  { color: var(--viet);  opacity: 0.6; }
+    .score-sep   { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: rgba(255,255,255,0.2); }
+
+    /* ─── ROUNDS TABLE ─── */
+    .rounds { display: grid; grid-template-columns: 1fr; gap: 1rem; max-width: 800px; margin: 0 auto; }
+
+    .round {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;
+      background: rgba(255,255,255,0.03); border-radius: 8px; padding: 1.2rem 1.5rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: background 0.3s;
+    }
+    .round:hover { background: rgba(255,255,255,0.06); }
+
+    .round-category {
+      font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.4); text-align: center;
+    }
+
+    .round-side { display: flex; align-items: center; gap: 0.8rem; }
+    .round-side.india { justify-content: flex-start; }
+    .round-side.viet  { justify-content: flex-end; }
+
+    .round-label { font-size: 0.9rem; font-weight: 600; }
+    .round-bar {
+      height: 6px; border-radius: 999px; flex: 1; max-width: 120px;
+      background: rgba(255,255,255,0.08);
+      position: relative; overflow: hidden;
+    }
+    .round-fill {
+      height: 100%; border-radius: 999px;
+      transition: width 1.5s cubic-bezier(0.23,1,0.32,1);
+    }
+    .fill-india { background: linear-gradient(90deg, var(--india2), var(--india)); }
+    .fill-viet  { background: linear-gradient(90deg, var(--viet), var(--viet2)); }
+
+    .win-star { color: var(--india); font-size: 0.8rem; }
+    .lose-star { opacity: 0.3; font-size: 0.8rem; }
+
+    /* ─── ROAST SECTION ─── */
+    #roast {
+      padding: 6rem 4rem; background: var(--dark);
+    }
+    .roast-header { text-align: center; margin-bottom: 4rem; }
+    .roast-header h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem); letter-spacing: 3px;
+    }
+    .roast-header h2 span { color: var(--india); }
+    .roast-header p { color: rgba(255,255,255,0.4); margin-top: 0.5rem; font-size: 0.9rem; }
+
+    .roast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+
+    .roast-card {
+      border-radius: 12px; padding: 1.8rem;
+      border: 1px solid; position: relative; overflow: hidden;
+    }
+    .roast-card.india-wins {
+      background: rgba(255,153,51,0.05);
+      border-color: rgba(255,153,51,0.25);
+    }
+    .roast-card.viet-loses {
+      background: rgba(218,37,29,0.04);
+      border-color: rgba(218,37,29,0.15);
+    }
+    .roast-card-tag {
+      font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+      font-weight: 700; margin-bottom: 0.8rem;
+    }
+    .india-wins .roast-card-tag { color: var(--india); }
+    .viet-loses .roast-card-tag { color: rgba(218,37,29,0.6); }
+
+    .roast-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .roast-card p { font-size: 0.88rem; line-height: 1.7; color: rgba(255,255,255,0.55); }
+
+    /* ─── FINAL VERDICT ─── */
+    #verdict {
+      background: linear-gradient(135deg, #0d0500, #1a0800, #001a00);
+      padding: 7rem 4rem; text-align: center;
+      border-top: 2px solid rgba(255,153,51,0.3);
+    }
+    .verdict-trophy { font-size: 5rem; animation: float 3s ease-in-out infinite; margin-bottom: 1.5rem; }
+    .verdict-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 6rem); letter-spacing: 3px;
+      background: linear-gradient(135deg, var(--india), var(--india2), var(--india));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 1rem;
+    }
+    .verdict-sub { font-size: 1.1rem; color: rgba(255,255,255,0.5); max-width: 600px; margin: 0 auto; line-height: 1.8; }
+    .verdict-names {
+      margin-top: 2.5rem; display: flex; align-items: center; justify-content: center; gap: 2rem; flex-wrap: wrap;
+    }
+    .verdict-winner-name {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+      color: var(--india); letter-spacing: 3px;
+      text-shadow: 0 0 30px var(--india-glow);
+    }
+    .verdict-loser-name {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem;
+      color: rgba(255,255,255,0.25); letter-spacing: 2px; text-decoration: line-through;
+    }
+    .verdict-vs { color: rgba(255,255,255,0.2); font-size: 1.2rem; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #000; padding: 2rem; text-align: center;
+      font-size: 0.78rem; color: rgba(255,255,255,0.25);
+    }
+    footer span { color: var(--india); }
+
+    /* ─── TICKER ─── */
+    .ticker-wrap {
+      background: var(--india); color: #000; overflow: hidden;
+      padding: 0.6rem 0; white-space: nowrap;
+    }
+    .ticker {
+      display: inline-block;
+      animation: ticker 20s linear infinite;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    }
+    @keyframes ticker { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      #hero { grid-template-columns: 1fr; grid-template-rows: 1fr auto 1fr; }
+      .vs-divider { width: 100%; height: 60px; flex-direction: row; }
+      .vs-text { writing-mode: horizontal-tb; letter-spacing: 4px; }
+      .vs-line { width: auto; height: 2px; flex: 1; }
+      #scoreboard, #roast, #verdict { padding: 4rem 1.5rem; }
+      .roast-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      🇮🇳 INDIA WINS &nbsp;&nbsp;&bull;&nbsp;&nbsp; AADITH KANNOTH &gt; ANH NGUYEN &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+      🌶️ SPICES UNMATCHED &nbsp;&nbsp;&bull;&nbsp;&nbsp; BOLLYWOOD NEVER SLEEPS &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+      🇮🇳 INDIA WINS &nbsp;&nbsp;&bull;&nbsp;&nbsp; AADITH KANNOTH &gt; ANH NGUYEN &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+      🌶️ SPICES UNMATCHED &nbsp;&nbsp;&bull;&nbsp;&nbsp; BOLLYWOOD NEVER SLEEPS &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+    </div>
+  </div>
+
+  <!-- HERO SPLIT -->
+  <section id="hero">
+
+    <!-- INDIA SIDE -->
+    <div class="side side-india">
+      <div class="blob blob-india-1"></div>
+      <div class="blob blob-india-2"></div>
+      <div class="flag">🇮🇳</div>
+      <h1 class="hero-name india-name">AADITH<br/>KANNOTH</h1>
+      <p class="hero-country">India &mdash; The GOAT Side</p>
+      <div class="winner-badge">👑 THE WINNER</div>
+    </div>
+
+    <!-- VS -->
+    <div class="vs-divider">
+      <div class="vs-line"></div>
+      <div class="vs-text">VS</div>
+      <div class="vs-line"></div>
+    </div>
+
+    <!-- VIET SIDE -->
+    <div class="side side-viet">
+      <div class="blob blob-viet-1"></div>
+      <div class="blob blob-viet-2"></div>
+      <div class="flag">🇻🇳</div>
+      <h1 class="hero-name viet-name">ANH<br/>NGUYEN</h1>
+      <p class="hero-country">Vietnam &mdash; Second Place 😬</p>
+      <div class="loser-badge">🥈 Runner Up</div>
+    </div>
+
+  </section>
+
+  <!-- SCOREBOARD -->
+  <section id="scoreboard">
+    <h2 class="score-title">THE <span>SCOREBOARD</span></h2>
+    <div class="score-display">
+      <div class="score-num score-india" id="india-score">0</div>
+      <div class="score-sep">—</div>
+      <div class="score-num score-viet" id="viet-score">0</div>
+    </div>
+
+    <div class="rounds">
+
+      <div class="round">
+        <div class="round-side india">
+          <span class="win-star">★★★★★</span>
+          <div class="round-bar"><div class="round-fill fill-india" style="width:95%"></div></div>
+          <span class="round-label">🌶️ Food</span>
+        </div>
+        <div class="round-category">Flavor</div>
+        <div class="round-side viet" style="justify-content:flex-end;">
+          <span class="round-label">🍜 Pho</span>
+          <div class="round-bar"><div class="round-fill fill-viet" style="width:55%"></div></div>
+          <span class="lose-star">★★★</span>
+        </div>
+      </div>
+
+      <div class="round">
+        <div class="round-side india">
+          <span class="win-star">★★★★★</span>
+          <div class="round-bar"><div class="round-fill fill-india" style="width:98%"></div></div>
+          <span class="round-label">🎬 Culture</span>
+        </div>
+        <div class="round-category">Richness</div>
+        <div class="round-side viet" style="justify-content:flex-end;">
+          <span class="round-label">🏯 History</span>
+          <div class="round-bar"><div class="round-fill fill-viet" style="width:50%"></div></div>
+          <span class="lose-star">★★★</span>
+        </div>
+      </div>
+
+      <div class="round">
+        <div class="round-side india">
+          <span class="win-star">★★★★★</span>
+          <div class="round-bar"><div class="round-fill fill-india" style="width:90%"></div></div>
+          <span class="round-label">💅 Drip</span>
+        </div>
+        <div class="round-category">Style</div>
+        <div class="round-side viet" style="justify-content:flex-end;">
+          <span class="round-label">👕 Fit</span>
+          <div class="round-bar"><div class="round-fill fill-viet" style="width:45%"></div></div>
+          <span class="lose-star">★★</span>
+        </div>
+      </div>
+
+      <div class="round">
+        <div class="round-side india">
+          <span class="win-star">★★★★★</span>
+          <div class="round-bar"><div class="round-fill fill-india" style="width:100%"></div></div>
+          <span class="round-label">🧠 Big Brain</span>
+        </div>
+        <div class="round-category">Intellect</div>
+        <div class="round-side viet" style="justify-content:flex-end;">
+          <span class="round-label">📚 Smart</span>
+          <div class="round-bar"><div class="round-fill fill-viet" style="width:60%"></div></div>
+          <span class="lose-star">★★★</span>
+        </div>
+      </div>
+
+      <div class="round">
+        <div class="round-side india">
+          <span class="win-star">★★★★★</span>
+          <div class="round-bar"><div class="round-fill fill-india" style="width:92%"></div></div>
+          <span class="round-label">🕺 Moves</span>
+        </div>
+        <div class="round-category">Dance</div>
+        <div class="round-side viet" style="justify-content:flex-end;">
+          <span class="round-label">💃 Vibe</span>
+          <div class="round-bar"><div class="round-fill fill-viet" style="width:40%"></div></div>
+          <span class="lose-star">★★</span>
+        </div>
+      </div>
+
+      <div class="round">
+        <div class="round-side india">
+          <span class="win-star">★★★★★</span>
+          <div class="round-bar"><div class="round-fill fill-india" style="width:97%"></div></div>
+          <span class="round-label">😎 Rizz</span>
+        </div>
+        <div class="round-category">Charisma</div>
+        <div class="round-side viet" style="justify-content:flex-end;">
+          <span class="round-label">😊 Charm</span>
+          <div class="round-bar"><div class="round-fill fill-viet" style="width:48%"></div></div>
+          <span class="lose-star">★★</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ROAST CARDS -->
+  <section id="roast">
+    <div class="roast-header">
+      <h2>WHY <span>INDIA</span> CLEARS</h2>
+      <p>Objective facts. Not up for debate. Sorry Anh.</p>
+    </div>
+    <div class="roast-grid">
+
+      <div class="roast-card india-wins">
+        <p class="roast-card-tag">🇮🇳 India W</p>
+        <h3>The Spices Hit Different</h3>
+        <p>Biryani, butter chicken, dosas — Indian food is a cinematic experience. Pho is a broth. Respect the broth, but it's not the same tier.</p>
+      </div>
+
+      <div class="roast-card viet-loses">
+        <p class="roast-card-tag">🇻🇳 Vietnam L</p>
+        <h3>Anh Peaked at Pho</h3>
+        <p>Solid guy. Good vibes. But when your culture's biggest flex is a soup, Aadith's side is pulling from a different league entirely.</p>
+      </div>
+
+      <div class="roast-card india-wins">
+        <p class="roast-card-tag">🇮🇳 India W</p>
+        <h3>Bollywood is Undefeated</h3>
+        <p>3-hour movies, bangers every track, dance routines in the rain. Vietnam's film industry doesn't even have a Wikipedia category.</p>
+      </div>
+
+      <div class="roast-card viet-loses">
+        <p class="roast-card-tag">🇻🇳 Vietnam L</p>
+        <h3>Anh's Accent is Confusing</h3>
+        <p>We say this with love. But tones? Six of them?? Meanwhile Aadith is out here speaking three languages without breaking a sweat.</p>
+      </div>
+
+      <div class="roast-card india-wins">
+        <p class="roast-card-tag">🇮🇳 India W</p>
+        <h3>Aadith Has the Drip</h3>
+        <p>Traditional fits, modern fits, kurta to casual — the Indian wardrobe range is elite. Anh is wearing the same white tee again.</p>
+      </div>
+
+      <div class="roast-card viet-loses">
+        <p class="roast-card-tag">🇻🇳 Vietnam L</p>
+        <h3>Vietnam Only Has One Flag Color</h3>
+        <p>Red and yellow. That's it. India's got saffron, white, and green with an Ashoka Chakra in the middle. Design game not comparable.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- VERDICT -->
+  <section id="verdict">
+    <div class="verdict-trophy">🏆</div>
+    <h2 class="verdict-title">INDIA WINS.<br/>IT'S NOT CLOSE.</h2>
+    <p class="verdict-sub">
+      After an exhaustive, totally unbiased, completely objective analysis —
+      Aadith Kannoth and the Indian side take the W in every single category.
+      Better luck next time, Anh. We still love you though. 🙏
+    </p>
+    <div class="verdict-names">
+      <div class="verdict-winner-name">👑 AADITH KANNOTH</div>
+      <div class="verdict-vs">vs</div>
+      <div class="verdict-loser-name">ANH NGUYEN</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Totally unbiased website &bull; Made with <span>🧡</span> for <span>Aadith Kannoth</span> &bull; Sorry Anh lmao</p>
+  </footer>
+
+  <script>
+    // Animate score counter
+    function animateCount(el, target, duration) {
+      let start = 0, step = target / (duration / 16);
+      let timer = setInterval(() => {
+        start = Math.min(start + step, target);
+        el.textContent = Math.floor(start);
+        if (start >= target) clearInterval(timer);
+      }, 16);
+    }
+
+    // Trigger when scoreboard is in view
+    const scoreSection = document.getElementById('scoreboard');
+    let scored = false;
+    const scoreObs = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && !scored) {
+        scored = true;
+        animateCount(document.getElementById('india-score'), 6, 1500);
+        animateCount(document.getElementById('viet-score'), 0, 1500);
+      }
+    }, { threshold: 0.3 });
+    scoreObs.observe(scoreSection);
+
+    // Animate bar widths on scroll
+    const bars = document.querySelectorAll('.round-fill');
+    bars.forEach(b => {
+      const w = b.style.width; b.style.width = '0';
+      const obs = new IntersectionObserver(e => {
+        if (e[0].isIntersecting) { b.style.width = w; obs.disconnect(); }
+      }, { threshold: 0.5 });
+      obs.observe(b);
+    });
+  </script>
+</body>
+</html>
